@@ -10,12 +10,24 @@ const initList = [
 
 function App() {
   const [list, setList] = useState(initList);
+  const [editable, setEditable] = useState(false);
 
-  const removeItemHandle = (e) => {
-    console.dir(e.traget.name);
-    const filteredList = list.filter((v) => v.name !== e.traget.name);
+  function removeItemHandle(e) {
+    const filteredList = list.filter((v) => v.name !== e.target.name);
     setList(filteredList);
-  };
+  }
+
+  function makeEditableHandle() {
+    setEditable(true);
+  }
+
+  function keyPressHandle(e, i) {
+    if (e.key === 'Enter') {
+      setEditable(!editable);
+      const copyList = [...list];
+      copyList[i].name = e.target.value;
+    }
+  }
 
   return (
     <div className='App'>
@@ -28,13 +40,13 @@ function App() {
               key={`${k}${v.name}${v.calorie}`}
               item={v}
               onClick={removeItemHandle}
+              editable={editable}
+              onDoubleClick={makeEditableHandle}
+              onKeyPress={keyPressHandle}
+              index={k}
             />
           );
         })}
-
-        {/* <button onClick={removeunHealthyHandle} className='remove-button'>
-          Remove Unhealthy
-        </button> */}
       </header>
     </div>
   );
