@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import Item from './components/item';
+import useList from './hooks/useList';
 
 const initList = [
   { name: 'tomato', calorie: 20 },
@@ -9,12 +10,11 @@ const initList = [
 ];
 
 function App() {
-  const [list, setList] = useState(initList);
+  const items = useList(initList);
   const [editable, setEditable] = useState(false);
 
   function removeItemHandle(e) {
-    const filteredList = list.filter((v) => v.name !== e.target.name);
-    setList(filteredList);
+    items.removeItem(e.target.name);
   }
 
   function makeEditableHandle() {
@@ -24,8 +24,7 @@ function App() {
   function keyPressHandle(e, i) {
     if (e.key === 'Enter') {
       setEditable(!editable);
-      const copyList = [...list];
-      copyList[i].name = e.target.value;
+      items.saveItem(i, e.target.value);
     }
   }
 
@@ -34,7 +33,7 @@ function App() {
       <header className='App-header'>
         <h2>Grocery List</h2>
 
-        {list.map((v, k) => {
+        {items.list.map((v, k) => {
           return (
             <Item
               key={`${k}${v.name}${v.calorie}`}
